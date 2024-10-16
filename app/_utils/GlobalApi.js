@@ -20,10 +20,39 @@ const GetCategory=async()=>{
 
 
 // 
-const GetBusiness=async(category)=>{
-  const query=gql`
+const GetBusiness = async (category) => {
+  // Adjust the query based on category
+  const query = gql`
     query GetBusiness {
-  restaurants(where: {categories_some: {slug: "`+category+`"}}) {
+      restaurants${category && category !== 'all' ? `(where: {categories_some: {slug: "${category}"}})` : ''} {
+        aboutUs
+        address
+        banner {
+          url
+        }
+        categories {
+          name
+        }
+        id
+        name
+        restroType
+        slug
+        workingHours
+      }
+    }
+  `;
+
+  const result = await request(MASTER_URL, query);
+  return result;
+};
+
+
+
+const GetBusinessDetails=async(businessSlug)=>{
+  console.log(businessSlug)
+  const query=gql`
+    query RestaurantDetails {
+  restaurant(where: {slug: "`+businessSlug+`"}) {
     aboutUs
     address
     banner {
@@ -37,6 +66,23 @@ const GetBusiness=async(category)=>{
     restroType
     slug
     workingHours
+    menu {
+      ... on Menu {
+        id
+        category
+        menuItem {
+          ... on MenuItem {
+            id
+            name
+            description
+            price
+            productImage {
+              url
+            }
+          }
+        }
+      }
+    }
   }
 }
   `
@@ -46,5 +92,5 @@ const GetBusiness=async(category)=>{
 }
 
 export default{
-    GetCategory,GetBusiness
+    GetCategory,GetBusiness,GetBusinessDetails
 }
