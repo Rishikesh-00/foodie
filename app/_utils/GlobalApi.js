@@ -1,8 +1,8 @@
 import { gql, request } from 'graphql-request'
-const MASTER_URL=process.env.NEXT_PUBLIC_CLERK_BACKEND_API_URL;
+const MASTER_URL = process.env.NEXT_PUBLIC_CLERK_BACKEND_API_URL;
 // use to make getCategory request
-const GetCategory=async()=>{
-    const query=gql`
+const GetCategory = async () => {
+  const query = gql`
     query MyQuery {
   categories(first: 50) {
     id
@@ -14,8 +14,8 @@ const GetCategory=async()=>{
   }
 }
     `
-    const result=await request(MASTER_URL,query)
-    return result;
+  const result = await request(MASTER_URL, query)
+  return result;
 }
 
 
@@ -48,11 +48,11 @@ const GetBusiness = async (category) => {
 
 
 
-const GetBusinessDetails=async(businessSlug)=>{
-  console.log(businessSlug)
-  const query=gql`
+const GetBusinessDetails = async (businessSlug) => {
+  // console.log(businessSlug)
+  const query = gql`
     query RestaurantDetails {
-  restaurant(where: {slug: "`+businessSlug+`"}) {
+  restaurant(where: {slug: "`+ businessSlug + `"}) {
     aboutUs
     address
     banner {
@@ -87,10 +87,58 @@ const GetBusinessDetails=async(businessSlug)=>{
 }
   `
 
-  const result=await request(MASTER_URL,query)
-    return result;
+  const result = await request(MASTER_URL, query)
+  return result;
 }
 
-export default{
-    GetCategory,GetBusiness,GetBusinessDetails
+
+const AddToCart = async (data) => {
+  // console.log({data})
+  const query = gql`
+      mutation MyMutation {
+  createUserCart(
+    data: {email: "`+data?.email+`", price: `+data.price+`, productDescription: "`+data.description+`", productImage: "`+data?.productImage+`", productName: "`+data.name+`"
+    , restaurant: {connect: {slug: "`+data?.restaurantSlug+`"}}
+    }
+  ) {
+    id
+  }
+  
+  publishManyUserCarts(to: PUBLISHED) {
+    count
+  }
+}
+  `
+
+  const result = await request(MASTER_URL, query)
+  return result;
+}
+
+const GetUserCart=async(userEmail)=>{
+  // console.log(userEmail)
+  const query=gql`
+    query GetUserCart {
+  userCarts(where: {email: "`+userEmail+`"}, first: 100000000) {
+    id
+    price
+    productDescription
+    productImage
+    productName
+     restaurant {
+    name
+    banner {
+      url
+    }
+    slug
+  }
+  }
+}
+  `
+  const result = await request(MASTER_URL, query)
+  return result;
+
+}
+
+export default {
+  GetCategory, GetBusiness, GetBusinessDetails, AddToCart, GetUserCart
 }
