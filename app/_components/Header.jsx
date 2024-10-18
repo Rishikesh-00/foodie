@@ -5,6 +5,13 @@ import { Search, ShoppingCart } from 'lucide-react'
 import React, { useContext, useEffect, useState } from 'react'
 import { CartUpdateContext } from '../_context/CartUpdateContext'
 import GlobalApi from '../_utils/GlobalApi'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import Cart from './Cart'
+
 
 export default function Header() {
   const { user, isSignedIn, isLoaded } = useUser();
@@ -22,7 +29,7 @@ export default function Header() {
       GlobalApi.GetUserCart(user?.primaryEmailAddress.emailAddress)
         .then(res => {
           setCart(res.userCarts);
-           console.log(res?.userCarts)
+          console.log(res?.userCarts)
         }
 
         )
@@ -41,10 +48,20 @@ export default function Header() {
       </div>
       {isSignedIn ? (
         <div className='flex gap-3'>
-          <div className='flex'>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+            <div className='flex cursor-pointer'>
             <ShoppingCart />
             <span className='text-sm  h-7 w-7 flex justify-center items-center rounded-full bg-slate-200'>{cart?.length}</span>
           </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-full">
+              <Cart  cart={cart}/>
+            </PopoverContent>
+          </Popover>
+
+
           <UserButton />
         </div>
       ) : (
