@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export default function BusinessItem({ business }) {
-    // console.log(business.banner.url)
+    
     return (
         
         <Link href={'/restaurant/'+business?.slug} className='p-[12px] hover:border  rounded-xl hover:border-orange-500 transition-all cursor-pointer ease-in-out hover:bg-orange-50'>

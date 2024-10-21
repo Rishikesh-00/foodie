@@ -12,27 +12,24 @@ import {
 } from "@/components/ui/popover"
 import Cart from './Cart'
 
-
 export default function Header() {
   const { user, isSignedIn, isLoaded } = useUser();
   const { updateCart, setUpdateCart } = useContext(CartUpdateContext);
   const [cart, setCart] = useState([])
+
   useEffect(() => {
     if (isLoaded && user?.primaryEmailAddress?.emailAddress) {
       user && GetUserCart();
     }
-  }, [updateCart && user, isLoaded]);
-
+  }, [updateCart, user, isLoaded]);
 
   const GetUserCart = () => {
     if (user?.primaryEmailAddress?.emailAddress) {
       GlobalApi.GetUserCart(user?.primaryEmailAddress.emailAddress)
         .then(res => {
           setCart(res.userCarts);
-          console.log(res?.userCarts)
-        }
-
-        )
+          console.log(res?.userCarts);
+        })
         .catch(error => console.error("Failed to fetch user cart:", error));
     }
   };
@@ -48,20 +45,21 @@ export default function Header() {
       </div>
       {isSignedIn ? (
         <div className='flex gap-3'>
-          
-          <Popover>
-            <PopoverTrigger asChild>
-            <div className='flex cursor-pointer'>
-            <ShoppingCart />
-            <span className='text-sm  h-7 w-7 flex justify-center items-center rounded-full bg-slate-200'>{cart?.length}</span>
-          </div>
-            </PopoverTrigger>
-            <PopoverContent className="w-full">
-              <Cart  cart={cart}/>
-            </PopoverContent>
-          </Popover>
-
-
+          {cart.length > 0 && ( // Conditional rendering for the cart icon
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className='flex cursor-pointer'>
+                  <ShoppingCart />
+                  <span className='text-sm h-7 w-7 flex justify-center items-center rounded-full bg-slate-200'>
+                    {cart.length}
+                  </span>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-full">
+                <Cart cart={cart} />
+              </PopoverContent>
+            </Popover>
+          )}
           <UserButton />
         </div>
       ) : (
