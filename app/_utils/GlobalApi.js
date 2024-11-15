@@ -167,6 +167,57 @@ const result = await request(MASTER_URL, query)
 }
 
 
+
+const CreateNewOrder=async(data)=>{
+  console.log(data)
+  const query=gql `
+    mutation CreateNewOrder {
+  createOrder(
+    data: {email: "`+data.email+`", 
+    orderAmount: `+data.orderAmount+`,
+     restaurantName: "`+data.restaurantName+`",
+      userName: "`+data.userName+`",
+       phone: "`+data.phone+`",
+        zipCode: "`+data.zipCode+`",
+         address: "`+data.address+`"
+         }
+  ) {
+    id
+  }
+}
+  `
+const result = await request(MASTER_URL, query)
+  return result;
+}
+
+
+
+const UpdateOrderToAddOrderItem=async(name,price,id,email)=>{
+  // console.log(data)
+  const query=gql `
+    mutation UpdateOrderWithDetails {
+  updateOrder(
+    data: {orderDetail: {create: {OrderItem:
+     {data: {name: "`+name+`", price: `+price+`}}}}}
+    where: {id: "`+id+`"}
+  ) {
+    id
+  }
+    publishManyOrders(to: PUBLISHED) {
+    count
+  }
+   
+  deleteManyUserCarts(where: {email: "`+email+`"}) {
+    count
+  
+}
+}
+  `
+const result = await request(MASTER_URL, query)
+  return result;
+}
+
+
 export default {
-  GetCategory, GetBusiness, GetBusinessDetails, AddToCart, GetUserCart,DisconnectRestroFromUserCartItem,DeleteItemFromCart
+  GetCategory, GetBusiness, GetBusinessDetails, AddToCart, GetUserCart,DisconnectRestroFromUserCartItem,DeleteItemFromCart,CreateNewOrder,UpdateOrderToAddOrderItem
 }

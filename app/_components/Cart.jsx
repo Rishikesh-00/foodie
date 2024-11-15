@@ -5,6 +5,7 @@ import React, { useContext } from 'react'
 import GlobalApi from '../_utils/GlobalApi'
 import { toast } from 'sonner'
 import { CartUpdateContext } from '../_context/CartUpdateContext'
+import Link from 'next/link'
 
 function Cart({ cart }) {
     const { updateCart, setUpdateCart } = useContext(CartUpdateContext);
@@ -29,7 +30,7 @@ function Cart({ cart }) {
         }).catch(err => console.error("Error removing item:", err));
     }
 
-    
+
     // if(cart.length>0)
     return (
         <div>
@@ -49,13 +50,16 @@ function Cart({ cart }) {
                         </div>
                     ))
                 }
-                <Button className='bg-orange-600 hover:bg-orange-500 outline-none'>
-                    Checkout Rs.{CalculateCartAmount()}
-                </Button>
+                <Link href={'/checkout?restaurant='+cart[0]?.restaurant?.name} className='w-full'>
+                    <Button className='bg-orange-600 hover:bg-orange-500 outline-none w-full'>
+                        Checkout Rs.{CalculateCartAmount()}
+                    </Button>
+                </Link>
+
             </div>
         </div>
     )
-   
+
 }
 
 export default Cart
